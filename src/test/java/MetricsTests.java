@@ -1,10 +1,15 @@
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import shop.StreamAPIMetrics;
 import shop.model.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MetricsTests {
     @BeforeAll
@@ -12,6 +17,7 @@ public class MetricsTests {
         setUpCustomers();
         setUpItems();
         setOrders();
+        StreamAPIMetrics.setOrders(orders);
     }
 
     private static void setOrders() {
@@ -72,6 +78,7 @@ public class MetricsTests {
     private static final List<OrderItem> items = new ArrayList<>();
 
     @Test
-    public void testOrders() {
+    public void testUniqueCitiesGetter() {
+        Assertions.assertIterableEquals(Set.of("Narach", "Minsk"), new HashSet<>(StreamAPIMetrics.getUniqueCities()));
     }
 }
