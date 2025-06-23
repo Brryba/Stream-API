@@ -47,15 +47,27 @@ public class MetricsTests {
         ));
         orders.add(new Order("4",
                 LocalDateTime.now().minusDays(100),
-                customers.get(1),
+                customers.getFirst(),
                 new ArrayList<>(items),
                 OrderStatus.DELIVERED
         ));
         orders.add(new Order("5",
                 LocalDateTime.now().minusDays(100),
-                customers.get(2),
+                customers.getFirst(),
                 List.of(items.get(0), items.get(2), items.get(4)),
                 OrderStatus.CANCELLED
+        ));
+        orders.add(new Order("6",
+                LocalDateTime.now().minusDays(100),
+                customers.getFirst(),
+                List.of(items.get(0), items.get(2), items.get(4)),
+                OrderStatus.CANCELLED
+        ));
+        orders.add(new Order("7",
+                LocalDateTime.now().minusDays(150),
+                customers.getFirst(),
+                List.of(items.get(1), items.get(2), items.get(4)),
+                OrderStatus.SHIPPED
         ));
     }
 
@@ -95,5 +107,11 @@ public class MetricsTests {
     @Test
     public void testAverageIncomeForAllSuccessfullyCompletedOrders() {
         assertEquals(60, StreamAPIMetrics.getAverageCheckForSuccessfullyDeliveredOrders());
+    }
+
+    @Test
+    public void testGettingCustomersWithMoreThan5Orders() {
+        Assertions.assertIterableEquals(List.of(customers.getFirst()),
+                StreamAPIMetrics.getCustomersWithMoreThan5CompletedOrders());
     }
 }

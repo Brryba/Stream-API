@@ -1,6 +1,7 @@
 package shop;
 
 import lombok.Setter;
+import shop.model.Customer;
 import shop.model.Order;
 import shop.model.OrderItem;
 import shop.model.OrderStatus;
@@ -48,5 +49,16 @@ public class StreamAPIMetrics {
                         .sum())
                 .average()
                 .orElse(0);
+    }
+
+    public static List<Customer> getCustomersWithMoreThan5CompletedOrders() {
+        return orders.stream()
+                .map(Order::getCustomer)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() > 5)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 }
