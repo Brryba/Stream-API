@@ -91,7 +91,7 @@ public class MetricsTests {
 
     @Test
     public void testUniqueCitiesGetter() {
-        Assertions.assertIterableEquals(Set.of("Narach", "Minsk"), new HashSet<>(StreamAPIMetrics.getUniqueCities()));
+        assertEquals(Set.of("Narach", "Minsk"), new HashSet<>(StreamAPIMetrics.getUniqueCities()));
     }
 
     @Test
