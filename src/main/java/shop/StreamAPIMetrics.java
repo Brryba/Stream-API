@@ -2,7 +2,10 @@ package shop;
 
 import lombok.Setter;
 import shop.model.Order;
+import shop.model.OrderItem;
+import shop.model.OrderStatus;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,5 +15,14 @@ public class StreamAPIMetrics {
 
     public static List<String> getUniqueCities() {
         return orders.stream().map(order -> order.getCustomer().getCity()).distinct().collect(Collectors.toList());
+    }
+
+    public static double getTotalIncomeForAllCompletedOrders() {
+        return orders.stream()
+                .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
+                .map(Order::getItems)
+                .flatMap(Collection::stream)
+                .mapToDouble(OrderItem::getPrice)
+                .sum();
     }
 }

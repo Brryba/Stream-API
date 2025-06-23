@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import shop.StreamAPIMetrics;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MetricsTests {
     @BeforeAll
@@ -37,7 +37,7 @@ public class MetricsTests {
                 LocalDateTime.now().minusDays(100),
                 customers.getFirst(),
                 List.of(items.get(2), items.get(3), items.get(4)),
-                OrderStatus.DELIVERED
+                OrderStatus.NEW
         ));
         orders.add(new Order("3",
                 LocalDateTime.now().minusDays(100),
@@ -55,16 +55,16 @@ public class MetricsTests {
                 LocalDateTime.now().minusDays(100),
                 customers.get(2),
                 List.of(items.get(0), items.get(2), items.get(4)),
-                OrderStatus.DELIVERED
+                OrderStatus.CANCELLED
         ));
     }
 
     private static void setUpItems() {
-        items.add(new OrderItem("laptop", 20, 12345, Category.ELECTRONICS));
-        items.add(new OrderItem("phone", 30, 123345, Category.ELECTRONICS));
+        items.add(new OrderItem("laptop", 20, 10, Category.ELECTRONICS));
+        items.add(new OrderItem("phone", 30, 20, Category.ELECTRONICS));
         items.add(new OrderItem("shirt", 10, 52, Category.CLOTHING));
-        items.add(new OrderItem("mirror", 1, 12345, Category.BEAUTY));
-        items.add(new OrderItem("sofa", 912, 12345, Category.HOME));
+        items.add(new OrderItem("mirror", 1, 10, Category.BEAUTY));
+        items.add(new OrderItem("sofa", 912, 15, Category.HOME));
     }
 
     private static void setUpCustomers() {
@@ -80,5 +80,10 @@ public class MetricsTests {
     @Test
     public void testUniqueCitiesGetter() {
         Assertions.assertIterableEquals(Set.of("Narach", "Minsk"), new HashSet<>(StreamAPIMetrics.getUniqueCities()));
+    }
+
+    @Test
+    public void testTotalIncomeForAllCompletedOrders() {
+        assertEquals(184, StreamAPIMetrics.getTotalIncomeForAllCompletedOrders());
     }
 }
