@@ -62,7 +62,7 @@ public class MetricsTests {
     private static void setUpItems() {
         items.add(new OrderItem("laptop", 20, 10, Category.ELECTRONICS));
         items.add(new OrderItem("phone", 30, 20, Category.ELECTRONICS));
-        items.add(new OrderItem("shirt", 10, 52, Category.CLOTHING));
+        items.add(new OrderItem("shirt", 10, 50, Category.CLOTHING));
         items.add(new OrderItem("mirror", 1, 10, Category.BEAUTY));
         items.add(new OrderItem("sofa", 912, 15, Category.HOME));
     }
@@ -84,11 +84,16 @@ public class MetricsTests {
 
     @Test
     public void testTotalIncomeForAllCompletedOrders() {
-        assertEquals(184, StreamAPIMetrics.getTotalIncomeForAllCompletedOrders());
+        assertEquals(180, StreamAPIMetrics.getTotalIncomeForAllCompletedOrders());
     }
 
     @Test
     public void testFindingMostPopularProduct() {
         assertEquals(items.get(2), StreamAPIMetrics.getMostPopularItem());
+    }
+
+    @Test
+    public void testAverageIncomeForAllSuccessfullyCompletedOrders() {
+        assertEquals(60, StreamAPIMetrics.getAverageCheckForSuccessfullyDeliveredOrders());
     }
 }

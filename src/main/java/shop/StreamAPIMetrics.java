@@ -38,4 +38,15 @@ public class StreamAPIMetrics {
                 .map(Map.Entry::getKey)
                 .orElse(null);
     }
+
+    public static double getAverageCheckForSuccessfullyDeliveredOrders() {
+        return orders.stream()
+                .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
+                .map(Order::getItems)
+                .mapToDouble(items -> items.stream()
+                        .mapToDouble(OrderItem::getPrice)
+                        .sum())
+                .average()
+                .orElse(0);
+    }
 }
