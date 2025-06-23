@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Assertions;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import shop.StreamAPIMetrics;
@@ -15,7 +17,6 @@ public class MetricsTests {
     @BeforeAll
     public static void setUp() {
         setUpCustomers();
-        setUpItems();
         setOrders();
         StreamAPIMetrics.setOrders(orders);
     }
@@ -24,59 +25,61 @@ public class MetricsTests {
         orders.add(new Order("0",
                 LocalDateTime.now().minusDays(100),
                 customers.getFirst(),
-                List.of(items.getFirst(), items.get(2)),
+                List.of(new OrderItem("laptop", 1, 10, Category.ELECTRONICS),
+                        new OrderItem("shirt", 2, 50, Category.CLOTHING)),
                 OrderStatus.DELIVERED
         ));
         orders.add(new Order("1",
                 LocalDateTime.now().minusDays(100),
                 customers.get(1),
-                List.of(items.get(2)),
+                List.of(new OrderItem("shirt", 1, 50, Category.CLOTHING)),
                 OrderStatus.SHIPPED
         ));
         orders.add(new Order("2",
                 LocalDateTime.now().minusDays(100),
                 customers.getFirst(),
-                List.of(items.get(2), items.get(3), items.get(4)),
+                List.of(new OrderItem("shirt", 1, 50, Category.CLOTHING),
+                        new OrderItem("mirror", 1, 10, Category.BEAUTY),
+                        new OrderItem("sofa", 5, 15, Category.HOME)),
                 OrderStatus.NEW
         ));
         orders.add(new Order("3",
                 LocalDateTime.now().minusDays(100),
                 customers.get(2),
-                List.of(items.getLast()),
+                List.of(new OrderItem("sofa", 2, 15, Category.HOME)),
                 OrderStatus.DELIVERED
         ));
         orders.add(new Order("4",
                 LocalDateTime.now().minusDays(100),
                 customers.getFirst(),
-                new ArrayList<>(items),
+                List.of(new OrderItem("phone", 3, 20, Category.ELECTRONICS),
+                        new OrderItem("laptop", 1, 10, Category.ELECTRONICS)),
                 OrderStatus.DELIVERED
         ));
         orders.add(new Order("5",
                 LocalDateTime.now().minusDays(100),
                 customers.getFirst(),
-                List.of(items.get(0), items.get(2), items.get(4)),
+                List.of(new OrderItem("laptop", 1, 10, Category.ELECTRONICS),
+                        new OrderItem("shirt", 1, 50, Category.CLOTHING),
+                        new OrderItem("sofa", 2, 15, Category.HOME)),
                 OrderStatus.CANCELLED
         ));
         orders.add(new Order("6",
                 LocalDateTime.now().minusDays(100),
                 customers.getFirst(),
-                List.of(items.get(0), items.get(2), items.get(4)),
+                List.of(new OrderItem("laptop", 1, 10, Category.ELECTRONICS),
+                        new OrderItem("shirt", 1, 50, Category.CLOTHING),
+                        new OrderItem("sofa", 1, 15, Category.HOME)),
                 OrderStatus.CANCELLED
         ));
         orders.add(new Order("7",
                 LocalDateTime.now().minusDays(150),
                 customers.getFirst(),
-                List.of(items.get(1), items.get(2), items.get(4)),
+                List.of(new OrderItem("phone", 2, 20, Category.ELECTRONICS),
+                        new OrderItem("shirt", 1, 50, Category.CLOTHING),
+                        new OrderItem("sofa", 3, 15, Category.HOME)),
                 OrderStatus.SHIPPED
         ));
-    }
-
-    private static void setUpItems() {
-        items.add(new OrderItem("laptop", 20, 10, Category.ELECTRONICS));
-        items.add(new OrderItem("phone", 30, 20, Category.ELECTRONICS));
-        items.add(new OrderItem("shirt", 10, 50, Category.CLOTHING));
-        items.add(new OrderItem("mirror", 1, 10, Category.BEAUTY));
-        items.add(new OrderItem("sofa", 912, 15, Category.HOME));
     }
 
     private static void setUpCustomers() {
@@ -96,17 +99,17 @@ public class MetricsTests {
 
     @Test
     public void testTotalIncomeForAllCompletedOrders() {
-        assertEquals(180, StreamAPIMetrics.getTotalIncomeForAllCompletedOrders());
+        assertEquals(210, StreamAPIMetrics.getTotalIncomeForAllCompletedOrders());
     }
 
     @Test
     public void testFindingMostPopularProduct() {
-        assertEquals(items.get(2), StreamAPIMetrics.getMostPopularItem());
+        assertEquals("sofa", StreamAPIMetrics.getMostPopularItem().getProductName());
     }
 
     @Test
     public void testAverageIncomeForAllSuccessfullyCompletedOrders() {
-        assertEquals(60, StreamAPIMetrics.getAverageCheckForSuccessfullyDeliveredOrders());
+        assertEquals(70, StreamAPIMetrics.getAverageCheckForSuccessfullyDeliveredOrders());
     }
 
     @Test

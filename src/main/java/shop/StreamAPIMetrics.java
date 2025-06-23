@@ -25,14 +25,15 @@ public class StreamAPIMetrics {
                 .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
                 .map(Order::getItems)
                 .flatMap(Collection::stream)
-                .mapToDouble(OrderItem::getPrice)
+                .mapToDouble(orderItem -> orderItem.getPrice() * orderItem.getQuantity())
                 .sum();
     }
 
     public static OrderItem getMostPopularItem() {
         return orders.stream()
                 .flatMap(order -> order.getItems().stream())
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .collect(Collectors.groupingBy(item -> item,
+                        Collectors.summingInt(OrderItem::getQuantity)))
                 .entrySet()
                 .stream()
                 .max(Map.Entry.comparingByValue())
@@ -45,7 +46,7 @@ public class StreamAPIMetrics {
                 .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
                 .map(Order::getItems)
                 .mapToDouble(items -> items.stream()
-                        .mapToDouble(OrderItem::getPrice)
+                        .mapToDouble(orderItem -> orderItem.getQuantity() * orderItem.getPrice())
                         .sum())
                 .average()
                 .orElse(0);
