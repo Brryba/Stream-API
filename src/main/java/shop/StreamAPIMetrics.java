@@ -7,6 +7,8 @@ import shop.model.OrderStatus;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class StreamAPIMetrics {
@@ -24,5 +26,16 @@ public class StreamAPIMetrics {
                 .flatMap(Collection::stream)
                 .mapToDouble(OrderItem::getPrice)
                 .sum();
+    }
+
+    public static OrderItem getMostPopularItem() {
+        return orders.stream()
+                .flatMap(order -> order.getItems().stream())
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 }

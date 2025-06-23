@@ -86,4 +86,9 @@ public class MetricsTests {
     public void testTotalIncomeForAllCompletedOrders() {
         assertEquals(184, StreamAPIMetrics.getTotalIncomeForAllCompletedOrders());
     }
+
+    @Test
+    public void testFindingMostPopularProduct() {
+        assertEquals(items.get(2), StreamAPIMetrics.getMostPopularItem());
+    }
 }
