@@ -1,0 +1,65 @@
+package shop;
+
+import lombok.Setter;
+import shop.model.Customer;
+import shop.model.Order;
+import shop.model.OrderItem;
+import shop.model.OrderStatus;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+public class StreamAPIMetrics {
+    @Setter
+    private static List<Order> orders;
+
+    public static List<String> getUniqueCities() {
+        return orders.stream().map(order -> order.getCustomer().getCity()).distinct().collect(Collectors.toList());
+    }
+
+    public static double getTotalIncomeForAllCompletedOrders() {
+        return orders.stream()
+                .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
+                .map(Order::getItems)
+                .flatMap(Collection::stream)
+                .mapToDouble(orderItem -> orderItem.getPrice() * orderItem.getQuantity())
+                .sum();
+    }
+
+    public static OrderItem getMostPopularItem() {
+        return orders.stream()
+                .flatMap(order -> order.getItems().stream())
+                .collect(Collectors.groupingBy(item -> item,
+                        Collectors.summingInt(OrderItem::getQuantity)))
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+    }
+
+    public static double getAverageCheckForSuccessfullyDeliveredOrders() {
+        return orders.stream()
+                .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
+                .map(Order::getItems)
+                .mapToDouble(items -> items.stream()
+                        .mapToDouble(orderItem -> orderItem.getQuantity() * orderItem.getPrice())
+                        .sum())
+                .average()
+                .orElse(0);
+    }
+
+    public static List<Customer> getCustomersWithMoreThan5CompletedOrders() {
+        return orders.stream()
+                .map(Order::getCustomer)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() > 5)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
+}
